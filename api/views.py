@@ -5,5 +5,5 @@ from rest_framework.response import Response
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def protected_view(request):
-    return Response({'message': 'Hai accesso autorizzato!'})
+    return Response(request.user.user_info)
 
