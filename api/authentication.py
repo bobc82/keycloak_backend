@@ -2,6 +2,7 @@ from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 import requests
 from django.contrib.auth.models import AnonymousUser
+from rest_framework.permissions import BasePermission
 
 class TokenNoopUser(AnonymousUser):
     """
@@ -15,6 +16,11 @@ class TokenNoopUser(AnonymousUser):
     @property
     def is_authenticated(self):
         return True
+
+class HasRolePermission(BasePermission):
+    def has_permission(self, request, view):
+        print("permission user info ", type(request.user.user_info))
+        return "can_view_reports" in request.user.user_info["realm_access"]["roles"]
 
 class KeycloakAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -41,6 +47,7 @@ class KeycloakAuthentication(BaseAuthentication):
         print("data ", data)
 
         response = requests.post(url, data=data)
+        print("response ", response)
         result = response.json()
 
         print("result ", result)
